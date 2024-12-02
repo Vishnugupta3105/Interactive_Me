@@ -15,3 +15,4 @@ langchain_google_genai
 numpy
 pandas
 blis
+setuptools
