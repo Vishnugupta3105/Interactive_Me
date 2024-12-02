@@ -10,6 +10,7 @@ transformers
 torch
 langchain
 wikipedia-api
+pypdf
 spacy
 langchain-groq
 langchain-community
