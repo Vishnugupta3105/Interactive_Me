@@ -1,4 +1,4 @@
-﻿streamlit
+streamlit
 google-auth
 google-auth-oauthlib
 google-auth-httplib2
@@ -12,7 +12,7 @@ spacy
 langchain_groq
 langchain_community
 langchain_google_genai
-numpy
+numpy==1.21.0  
 pandas
-blis
+blis>=0.4.0,<1.0.1  
 setuptools
