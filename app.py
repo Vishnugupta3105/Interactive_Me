@@ -12,7 +12,6 @@ from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from dotenv import load_dotenv
 import wikipediaapi
 from gtts import gTTS
-import spacy
 import time
 import json
 import os
