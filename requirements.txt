@@ -11,7 +11,7 @@ torch
 langchain
 wikipedia-api
 pypdf
-FAISS
+faiss-cpu
 spacy
 langchain-groq
 langchain-community
