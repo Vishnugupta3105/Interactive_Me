@@ -17,6 +17,39 @@ import time
 import json
 import os
 from google.oauth2 import service_account
+# Ensure st.secrets contains the expected keys
+if "google_application_credentials" in st.secrets:
+    # Retrieve the JSON string from secrets
+    google_credentials_json = st.secrets["google_application_credentials"]
+    
+    # Debugging print statement to see what google_credentials_json contains
+    print("google_credentials_json:", google_credentials_json)
+    
+    try:
+        # Convert the JSON string to a dictionary
+        google_credentials = json.loads(google_credentials_json)
+        
+        # Debugging print statement to see the converted dictionary
+        print("google_credentials:", google_credentials)
+        
+        # Write the credentials to a temporary file
+        with open("google_credentials.json", "w") as f:
+            json.dump(google_credentials, f)
+        
+        # Set the environment variable to point to the temporary file
+        os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = "google_credentials.json"
+        
+        # Use the dictionary safely in your application
+        keys_needed = set(require if require is not None else [])
+        missing = keys_needed.difference(google_credentials.keys())
+        
+        if missing:
+            raise Exception(f"Missing keys: {missing}")
+        
+    except json.JSONDecodeError as e:
+        print("Error decoding JSON:", e)
+else:
+    print("Error: google_application_credentials key not found in secrets")
 
 # Access Google credentials from Streamlit secrets
 google_credentials_json = st.secrets["google_credentials"]
