@@ -17,6 +17,18 @@ import time
 import json
 from google.oauth2 import service_account
 
+# Access Google credentials from Streamlit secrets
+google_credentials_json = st.secrets["google_credentials"]
+google_credentials = json.loads(google_credentials_json)
+
+# Write the credentials to a temporary file
+with open("google_credentials.json", "w") as f:
+    json.dump(google_credentials, f)
+
+# Set the environment variable to point to the temporary file
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = "google_credentials.json"
+
+
 # Load credentials from Streamlit secrets
 credentials_info = st.secrets["google_credentials"]
 credentials = service_account.Credentials.from_service_account_info(credentials_info)
