@@ -17,20 +17,15 @@ import time
 import json
 import os
 from google.oauth2 import service_account
+
 # Ensure st.secrets contains the expected keys
 if "google_application_credentials" in st.secrets:
     # Retrieve the JSON string from secrets
     google_credentials_json = st.secrets["google_application_credentials"]
     
-    # Debugging print statement to see what google_credentials_json contains
-    print("google_credentials_json:", google_credentials_json)
-    
     try:
         # Convert the JSON string to a dictionary
         google_credentials = json.loads(google_credentials_json)
-        
-        # Debugging print statement to see the converted dictionary
-        print("google_credentials:", google_credentials)
         
         # Write the credentials to a temporary file
         with open("google_credentials.json", "w") as f:
@@ -39,126 +34,55 @@ if "google_application_credentials" in st.secrets:
         # Set the environment variable to point to the temporary file
         os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = "google_credentials.json"
         
-        # Use the dictionary safely in your application
-        keys_needed = set(require if require is not None else [])
+        # Validate necessary keys
+        keys_needed = {"type", "project_id", "private_key_id", "private_key", 
+                       "client_email", "client_id", "auth_uri", "token_uri", 
+                       "auth_provider_x509_cert_url", "client_x509_cert_url"}
         missing = keys_needed.difference(google_credentials.keys())
         
         if missing:
             raise Exception(f"Missing keys: {missing}")
         
     except json.JSONDecodeError as e:
-        print("Error decoding JSON:", e)
+        st.error(f"Error decoding JSON: {e}")
 else:
-    print("Error: google_application_credentials key not found in secrets")
-
-# Access Google credentials from Streamlit secrets
-google_credentials_json = st.secrets["google_credentials"]
-google_credentials = json.loads(google_credentials_json)
-
-# Write the credentials to a temporary file
-with open("google_credentials.json", "w") as f:
-    json.dump(google_credentials, f)
-
-# Set the environment variable to point to the temporary file
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = "google_credentials.json"
-
+    st.error("Error: google_application_credentials key not found in secrets")
 
 # Load credentials from Streamlit secrets
-credentials_info = st.secrets["google_credentials"]
-credentials = service_account.Credentials.from_service_account_info(credentials_info)
+credentials_info = st.secrets["google_application_credentials"]
+credentials = service_account.Credentials.from_service_account_info(json.loads(credentials_info))
 
 # Example: Initialize a Google Cloud service
 from google.cloud import storage  # Example service
 client = storage.Client(credentials=credentials)
-# Set custom page config for the Streamlit app 
-st.set_page_config( page_title="Sid_Bot: Your Interactive Storyteller", page_icon="📚", layout="wide", initial_sidebar_state="expanded" )
 
+# Set custom page config for the Streamlit app
+st.set_page_config(page_title="Sid_Bot: Your Interactive Storyteller", page_icon="📚", layout="wide", initial_sidebar_state="expanded")
 
-# Add custom CSS
-st.markdown("""
-<style>
-    .sidebar .sidebar-content {
-        background-color: #f0f2f6;
-    }
-    .stButton>button {
-        background-color: #4CAF50;
-        color: white;
-    }
-    .stTextInput>div>div>input {
-        border: 1px solid #ccc;
-        padding: 5px;
-        border-radius: 5px;
-    }
-    .image-container {
-        text-align: center;
-    }
-    .image-container img {
-        max-width: 200px;  /* Adjust the max-width as needed */
-        height: auto;
-        margin-bottom: 10px;
-    }
-    /* Custom font and underline for title */ 
-    .custom-title { font-family: 'Roboto', sans-serif; 
-    font-size: 2em; /* Adjust the font size as needed */
-    text-align: left;
-            
-    }
-</style>
-            
-""", unsafe_allow_html=True)
+# Load cover image
+def load_cover_image(title):
+    image_path = os.path.join(COVERS_PATH, f"{title}.jpg")
+    if os.path.exists(image_path):
+        return image_path
+    return None
 
-# Explicitly set the GOOGLE_APPLICATION_CREDENTIALS environment variable
-load_dotenv()
-# This step may not be required when using Streamlit's secrets
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = st.secrets["google_credentials"]
+# Display category selection with images
+st.sidebar.header("Select a Category")
+category = st.sidebar.selectbox("Category", ["Book", "Movie"])
 
+# Display titles with cover images
+titles = books if category == "Book" else movies
 
-# Define paths
-BOOKS_PATH = "./Books"
-MOVIES_PATH = "./Movies"
-COVERS_PATH = "./covers"
-
-# Get list of books and movies
-books = [book.replace(".pdf", "") for book in os.listdir(BOOKS_PATH) if book.endswith(".pdf")]
-movies = [movie.replace(".pdf", "") for movie in os.listdir(MOVIES_PATH) if movie.endswith(".pdf")]
-
-
-# Initialize Streamlit App with custom title
-st.markdown('<h1 class="custom-title">Sid_Bot: Your Interactive Storyteller</h1>', unsafe_allow_html=True)
-
-# Initialize chat history in session state
-if "messages" not in st.session_state:
-    st.session_state.messages = []
-
-
-# Load cover image 
-def load_cover_image(title): 
-    image_path = os.path.join(COVERS_PATH, f"{title}.jpg") 
-    if os.path.exists(image_path): 
-        return image_path 
-    return None 
-
-# Display category selection with images 
-st.sidebar.header("Select a Category") 
-category = st.sidebar.selectbox("Category", ["Book", "Movie"]) 
-
-# Display titles with cover images 
-if category == "Book": 
-    titles = books 
-else: 
-    titles = movies 
-    
-st.sidebar.header(f"Select a {category}") 
-title = st.sidebar.selectbox("Title", titles) 
+st.sidebar.header(f"Select a {category}")
+title = st.sidebar.selectbox("Title", titles)
 
 cover_image = load_cover_image(title)
 if cover_image:
     st.image(cover_image, width=200)  # Set the width to 200px
 else:
     st.write(f"Cover image not found for {title}")
-  
 
-# Function to load documents and create vectors (no change needed)
+# Function to load documents and create vectors
 def vector_embedding(file_path):
     st.session_state.embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
     st.session_state.loader = PyPDFLoader(file_path)
@@ -189,7 +113,6 @@ if title != st.session_state.current_title:
     else:
         st.error(f"Document '{title}' not found. Please check the title and try again.")
 
-
 # Function to query Wikipedia
 def query_wikipedia(query):
     wiki_wiki = wikipediaapi.Wikipedia('en')
@@ -200,20 +123,20 @@ def query_wikipedia(query):
         return None
     
 # Function to generate and play voice response using gTTS 
-def generate_voice_response(text): 
+def generate_voice_response(text):
     tts = gTTS(text, lang='en', tld='co.in') 
     tts.save("response.mp3") 
     audio_file = open("response.mp3", "rb") 
     audio_bytes = audio_file.read() 
     return audio_bytes
-      
 
 # Load Spacy Model
 nlp = spacy.load("en_core_web_sm") 
-# Function to analyze text and extract entities 
-def analyze_text(text): 
+
+# Function to analyze text and extract entities
+def analyze_text(text):
     doc = nlp(text)
-    entities = [(entity.text, entity.label_) for entity in doc.ents] 
+    entities = [(entity.text, entity.label_) for entity in doc.ents]
     return entities
 
 # Display previous chat messages
@@ -264,4 +187,3 @@ if prompt1 := st.chat_input("Ask me anything about the document!"):
             with st.chat_message("assistant"):
                 st.markdown(error_message)
             st.session_state.messages.append({"role": "assistant", "content": error_message})
-
