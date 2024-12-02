@@ -19,9 +19,9 @@ import os
 from google.oauth2 import service_account
 
 # Ensure st.secrets contains the expected keys
-if "google_application_credentials" in st.secrets:
+if "google_credentials" in st.secrets:
     # Retrieve the JSON string from secrets
-    google_credentials_json = st.secrets["google_application_credentials"]
+    google_credentials_json = st.secrets["google_credentials"]
     
     try:
         # Convert the JSON string to a dictionary
@@ -46,10 +46,10 @@ if "google_application_credentials" in st.secrets:
     except json.JSONDecodeError as e:
         st.error(f"Error decoding JSON: {e}")
 else:
-    st.error("Error: google_application_credentials key not found in secrets")
+    st.error("Error: google_credentials key not found in secrets")
 
 # Load credentials from Streamlit secrets
-credentials_info = st.secrets["google_application_credentials"]
+credentials_info = st.secrets["google_credentials"]
 credentials = service_account.Credentials.from_service_account_info(json.loads(credentials_info))
 
 # Example: Initialize a Google Cloud service
