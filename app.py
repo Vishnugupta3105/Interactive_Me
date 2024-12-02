@@ -15,6 +15,7 @@ from gtts import gTTS
 import spacy
 import time
 import json
+import os
 from google.oauth2 import service_account
 
 # Access Google credentials from Streamlit secrets
