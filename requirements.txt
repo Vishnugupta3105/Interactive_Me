@@ -10,3 +10,4 @@ langchain
 wikipedia-api
 spacy
 langchain_groq
+langchain_community
