@@ -8,11 +8,11 @@ google-cloud-storage
 gtts
 transformers
 torch
+spacy
 langchain
 wikipedia-api
 pypdf
 faiss-cpu
-spacy
 langchain-groq
 langchain-community
 langchain-google-genai
@@ -20,4 +20,4 @@ numpy==1.26.4  # Downgraded version
 pandas
 blis>=0.4.0,<1.0.1  # Version constraint to ensure compatibility
 setuptools  # Ensure setuptools is included to avoid distutils issues
-en_core_web_sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.5.0/en_core_web_sm-3.5.0.tar.gz
+spacy download en_core_web_sm
