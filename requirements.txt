@@ -9,9 +9,10 @@ torch
 langchain
 wikipedia-api
 spacy
-langchain_groq
-langchain_community
-langchain_google_genai
-numpy  
+langchain-groq
+langchain-community
+langchain-google-genai
+numpy==1.26.4  # Downgraded version
 pandas
-setuptools
+blis>=0.4.0,<1.0.1  # Version constraint to ensure compatibility
+setuptools  # Ensure setuptools is included to avoid distutils issues
