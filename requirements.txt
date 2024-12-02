@@ -1,4 +1,3 @@
-pip --upgrade pip
 streamlit
 google-auth
 google-auth-oauthlib
@@ -13,7 +12,6 @@ spacy
 langchain_groq
 langchain_community
 langchain_google_genai
-numpy==1.22.0  
+numpy  
 pandas
-blis>=0.4.0,<1.0.1  
 setuptools
