@@ -1,8 +1,6 @@
 import streamlit as st
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 import torch
-import os
-os.environ['KMP_DUPLICATE_LIB_OK'] = 'TRUE'
 from langchain_groq import ChatGroq
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.chains.combine_documents import create_stuff_documents_chain
@@ -16,7 +14,16 @@ import wikipediaapi
 from gtts import gTTS
 import spacy
 import time
+import json
+from google.oauth2 import service_account
 
+# Load credentials from Streamlit secrets
+credentials_info = st.secrets["google_credentials"]
+credentials = service_account.Credentials.from_service_account_info(credentials_info)
+
+# Example: Initialize a Google Cloud service
+from google.cloud import storage  # Example service
+client = storage.Client(credentials=credentials)
 # Set custom page config for the Streamlit app 
 st.set_page_config( page_title="Sid_Bot: Your Interactive Storyteller", page_icon="📚", layout="wide", initial_sidebar_state="expanded" )
 
@@ -54,13 +61,11 @@ st.markdown("""
             
 """, unsafe_allow_html=True)
 
-
-# Load environment variables from .env file
-load_dotenv()
-
 # Explicitly set the GOOGLE_APPLICATION_CREDENTIALS environment variable
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'C:/Users/Hp/Desktop/Interaction/cashmitra-b04d8a88d121.json'
-print("GOOGLE_APPLICATION_CREDENTIALS:", os.getenv('GOOGLE_APPLICATION_CREDENTIALS'))
+load_dotenv()
+# This step may not be required when using Streamlit's secrets
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = st.secrets["google_credentials"]
+
 
 # Define paths
 BOOKS_PATH = "./Books"
@@ -180,7 +185,8 @@ if prompt1 := st.chat_input("Ask me anything about the document!"):
     # Process the user question
     if 'vectors' in st.session_state:
         try:
-            llm = ChatGroq(groq_api_key=os.getenv('GROQ_API_KEY'), model_name="Llama3-8b-8192")
+            llm = ChatGroq(groq_api_key=st.secrets["groq_api"], model_name="Llama3-8b-8192")
+
             prompt = ChatPromptTemplate.from_template(
                 """
                 Answer the question based on the provided context only.
