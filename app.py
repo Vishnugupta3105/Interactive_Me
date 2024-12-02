@@ -59,6 +59,57 @@ client = storage.Client(credentials=credentials)
 # Set custom page config for the Streamlit app
 st.set_page_config(page_title="Sid_Bot: Your Interactive Storyteller", page_icon="📚", layout="wide", initial_sidebar_state="expanded")
 
+# Add custom CSS
+st.markdown("""
+<style>
+    .sidebar .sidebar-content {
+        background-color: #f0f2f6;
+    }
+    .stButton>button {
+        background-color: #4CAF50;
+        color: white;
+    }
+    .stTextInput>div>div>input {
+        border: 1px solid #ccc;
+        padding: 5px;
+        border-radius: 5px;
+    }
+    .image-container {
+        text-align: center;
+    }
+    .image-container img {
+        max-width: 200px;  /* Adjust the max-width as needed */
+        height: auto;
+        margin-bottom: 10px;
+    }
+    /* Custom font and underline for title */ 
+    .custom-title { font-family: 'Roboto', sans-serif; 
+    font-size: 2em; /* Adjust the font size as needed */
+    text-align: left;
+            
+    }
+</style>
+            
+""", unsafe_allow_html=True)
+
+# Define paths
+BOOKS_PATH = "./Books"
+MOVIES_PATH = "./Movies"
+COVERS_PATH = "./covers"
+
+# Get list of books and movies
+books = [book.replace(".pdf", "") for book in os.listdir(BOOKS_PATH) if book.endswith(".pdf")]
+movies = [movie.replace(".pdf", "") for movie in os.listdir(MOVIES_PATH) if movie.endswith(".pdf")]
+
+
+# Initialize Streamlit App with custom title
+st.markdown('<h1 class="custom-title">Sid_Bot: Your Interactive Storyteller</h1>', unsafe_allow_html=True)
+
+# Initialize chat history in session state
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
+
 # Load cover image
 def load_cover_image(title):
     image_path = os.path.join(COVERS_PATH, f"{title}.jpg")
