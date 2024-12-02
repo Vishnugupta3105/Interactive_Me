@@ -12,5 +12,6 @@ spacy
 langchain_groq
 langchain_community
 langchain_google_genai
-numpy==1.21.0 
-blis>=0.4.0,<1.0.1
+numpy
+pandas
+blis
