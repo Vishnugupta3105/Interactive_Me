@@ -181,15 +181,6 @@ def generate_voice_response(text):
     audio_bytes = audio_file.read() 
     return audio_bytes
 
-# Load Spacy Model
-nlp = spacy.load("en_core_web_sm") 
-
-# Function to analyze text and extract entities
-def analyze_text(text):
-    doc = nlp(text)
-    entities = [(entity.text, entity.label_) for entity in doc.ents]
-    return entities
-
 # Display previous chat messages
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
