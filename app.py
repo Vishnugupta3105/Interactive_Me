@@ -83,14 +83,20 @@ st.markdown("""
         margin-bottom: 10px;
     }
     /* Custom font and underline for title */ 
-    .custom-title { font-family: 'Roboto', sans-serif; 
-    font-size: 2em; /* Adjust the font size as needed */
-    text-align: left;
-            
+    .custom-title { 
+        font-family: 'Roboto', sans-serif; 
+        font-size: 2em; /* Adjust the font size as needed */
+        text-align: left;  
     }
+
+    /* Hide Streamlit menu and footer */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
+
 </style>
-            
 """, unsafe_allow_html=True)
+
 
 # Define paths
 BOOKS_PATH = "./Books"
