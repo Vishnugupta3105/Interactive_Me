@@ -178,7 +178,7 @@ if 'current_title' not in st.session_state:
     st.session_state.current_title = None
 
 # If the selected title has changed, load the new document
-if title != st.session_state.current_title:
+if title != st.session_state.current_title and not st.session_state.uploaded_file_path:
     st.session_state.current_title = title  # Update current title
     file_path = os.path.join(BOOKS_PATH if category == "Book" else MOVIES_PATH, f"{title}.pdf")
     
