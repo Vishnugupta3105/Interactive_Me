@@ -107,6 +107,9 @@ COVERS_PATH = "./covers"
 books = [book.replace(".pdf", "") for book in os.listdir(BOOKS_PATH) if book.endswith(".pdf")]
 movies = [movie.replace(".pdf", "") for movie in os.listdir(MOVIES_PATH) if movie.endswith(".pdf")]
 
+#Ensure temp directory exists
+if not os.path.exists('temp'):
+    os.makedirs('temp')
 
 # Initialize Streamlit App with custom title
 st.markdown('<h1 class="custom-title">Sid_Bot: Your Interactive Storyteller</h1>', unsafe_allow_html=True)
@@ -114,8 +117,19 @@ st.markdown('<h1 class="custom-title">Sid_Bot: Your Interactive Storyteller</h1>
 # Initialize chat history in session state
 if "messages" not in st.session_state:
     st.session_state.messages = []
+if "uploaded_file_path" not in st.session_state:
+    st.session_state.uploaded_file_path = None    
 
-
+# Function to load documents and create vectors
+def vector_embedding(file_path):
+    if 'vectors' not in st.session_state or st.session_state.file_path != file_path:
+        st.session_state.embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
+        st.session_state.loader = PyPDFLoader(file_path)
+        st.session_state.docs = st.session_state.loader.load()
+        st.session_state.text_splitter = RecursiveCharacterTextSplitter(chunk_size=2000, chunk_overlap=500)
+        st.session_state.final_documents = st.session_state.text_splitter.split_documents(st.session_state.docs)
+        st.session_state.vectors = FAISS.from_documents(st.session_state.final_documents, st.session_state.embeddings)
+        st.session_state.file_path= file_path
 # Load cover image
 def load_cover_image(title):
     image_path = os.path.join(COVERS_PATH, f"{title}.jpg")
@@ -133,20 +147,31 @@ titles = books if category == "Book" else movies
 st.sidebar.header(f"Select a {category}")
 title = st.sidebar.selectbox("Title", titles)
 
-cover_image = load_cover_image(title)
-if cover_image:
-    st.image(cover_image, width=200)  # Set the width to 200px
-else:
-    st.write(f"Cover image not found for {title}")
+# Upload user document
+st.sidebar.header("Upload Your Document")
+uploaded_file = st.sidebar.file_uploader("Choose a PDF file", type="pdf")
 
-# Function to load documents and create vectors
-def vector_embedding(file_path):
-    st.session_state.embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
-    st.session_state.loader = PyPDFLoader(file_path)
-    st.session_state.docs = st.session_state.loader.load()
-    st.session_state.text_splitter = RecursiveCharacterTextSplitter(chunk_size=2000, chunk_overlap=500)
-    st.session_state.final_documents = st.session_state.text_splitter.split_documents(st.session_state.docs)
-    st.session_state.vectors = FAISS.from_documents(st.session_state.final_documents, st.session_state.embeddings)
+if uploaded_file:
+    with st.spinner("Processing your document..."):
+        file_path = os.path.join("temp", uploaded_file.name)
+        with open(file_path, "wb") as f:
+            f.write(uploaded_file.getbuffer())
+        vector_embedding(file_path)
+        st.session_state.uploaded_file_path = file_path
+        st.session_state.current_title = None
+        st.success(f"'{uploaded_file.name}' has been uploaded and processed!")
+else:
+    st.session_state.uploaded_file_path = None
+
+# Display cover image 
+if st.session_state.uploaded_file_path: 
+    st.write(f"Uploaded document: {os.path.basename(st.session_state.uploaded_file_path)}") 
+else: 
+    cover_image = load_cover_image(title) 
+    if cover_image: st.image(cover_image, width=200) # Set the width to 200px 
+    else: 
+        st.write(f"Cover image not found for {title}")
+
 
 # Track selected title changes using session state
 if 'current_title' not in st.session_state:
@@ -169,6 +194,17 @@ if title != st.session_state.current_title:
         st.success(f"'{title}' loaded successfully in {elapsed_time:.2f} seconds!")
     else:
         st.error(f"Document '{title}' not found. Please check the title and try again.")
+
+#Function to cleanup uploaded file
+def cleanup_uploaded_file():
+    if st.session_state.uploaded_file_path and os.path.exists(st.session_state.uploaded_file_path):
+        os.remove(st.session_state.uploaded_file_path)
+        st.session_state.uploaded_file_path = None
+
+# Ensure cleanup happens after processing
+if st.session_state.uploaded_file_path:
+    cleanup_uploaded_file()
+
 
 # Function to query Wikipedia
 def query_wikipedia(query):
