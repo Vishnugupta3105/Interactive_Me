@@ -24,15 +24,9 @@ if "google_credentials" in st.secrets:
     google_credentials_json = st.secrets["google_credentials"]
     
     try:
-        # # Convert the JSON string to a dictionary
-        # google_credentials = json.loads(google_credentials_json)
-        # If google_credentials_json is a string, it's fine to parse it
-        if isinstance(google_credentials_json, str):
-            google_credentials = json.loads(google_credentials_json)
-        else:
-            # If it's an AttrDict or something else, convert to string first
-            google_credentials_json = str(google_credentials_json)
-            google_credentials = json.loads(google_credentials_json)
+        # Convert the JSON string to a dictionary
+         google_credentials = json.loads(google_credentials_json)
+       
         
         # Write the credentials to a temporary file
         with open("google_credentials.json", "w") as f:
