@@ -112,7 +112,7 @@ if not os.path.exists('temp'):
     os.makedirs('temp')
 
 # Initialize Streamlit App with custom title
-st.markdown('<h1 class="custom-title">Sid_Bot: Your Interactive Storyteller</h1>', unsafe_allow_html=True)
+st.markdown('<h1 class="custom-title">Sid_Bot: Your Interactive Chat Bot </h1>', unsafe_allow_html=True)
 
 # Initialize chat history in session state
 if "messages" not in st.session_state:
