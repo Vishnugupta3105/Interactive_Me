@@ -25,7 +25,7 @@ if "google_credentials" in st.secrets:
     
     try:
         # Convert the JSON string to a dictionary
-         google_credentials = json.loads(google_credentials_json)
+        google_credentials = json.loads(google_credentials_json)
        
         
         # Write the credentials to a temporary file
