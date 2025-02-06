@@ -58,7 +58,7 @@ from google.cloud import storage  # Example service
 client = storage.Client(credentials=credentials)
 
 # Set custom page config for the Streamlit app
-st.set_page_config(page_title="Siddy_Bot: Your Interactive Storyteller", page_icon="📚", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="Siddy_Bot:  A RAG Based Chatbot", page_icon="📚", layout="wide", initial_sidebar_state="expanded")
 
 # Add custom CSS
 st.markdown("""
