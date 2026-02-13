@@ -6,6 +6,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.prompts import ChatPromptTemplate
 from langchain.chains import create_retrieval_chain
+from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
@@ -124,7 +125,7 @@ if "uploaded_file_path" not in st.session_state:
 # Function to load documents and create vectors
 def vector_embedding(file_path):
     if 'vectors' not in st.session_state or st.session_state.file_path != file_path:
-        st.session_state.embeddings = GoogleGenerativeAIEmbeddings(model="models/text-embedding-004",google_api_key=st.secrets["GOOGLE_API_KEY"])
+        st.session_state.embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
         st.session_state.loader = PyPDFLoader(file_path)
         st.session_state.docs = st.session_state.loader.load()
         st.session_state.text_splitter = RecursiveCharacterTextSplitter(chunk_size=2000, chunk_overlap=500)
