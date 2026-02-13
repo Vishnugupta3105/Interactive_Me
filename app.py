@@ -249,7 +249,7 @@ if prompt1 := st.chat_input("Ask me anything about the document!"):
     # Process the user question
     if 'vectors' in st.session_state:
         try:
-            llm = ChatGroq(groq_api_key=st.secrets["groq_api"], model_name="Llama3-8b-8192")
+            llm = ChatGroq(groq_api_key=st.secrets["groq_api"], model_name="llama-3.1-70b-versatile")
 
             prompt = ChatPromptTemplate.from_template(
                 """
