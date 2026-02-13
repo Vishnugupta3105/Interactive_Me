@@ -9,16 +9,18 @@ gtts
 spacy
 transformers
 torch
-langchain
 wikipedia-api
 pypdf
 faiss-cpu
-langchain-groq
-langchain-community
-langchain-google-genai
+langchain==0.1.16
+langchain-community==0.0.32
+langchain-core==0.1.46
+langchain-groq==0.1.3
+langchain-google-genai==0.0.11
 numpy==1.26.4  # Downgraded version
 pandas
 blis>=0.4.0,<1.0.1  # Version constraint to ensure compatibility
 setuptools  # Ensure setuptools is included to avoid distutils issues
 spacy>=3.0.0,<4.0.0
 en_core_web_sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1-py3-none-any.whl
+
