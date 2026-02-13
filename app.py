@@ -124,7 +124,7 @@ if "uploaded_file_path" not in st.session_state:
 # Function to load documents and create vectors
 def vector_embedding(file_path):
     if 'vectors' not in st.session_state or st.session_state.file_path != file_path:
-        st.session_state.embeddings = GoogleGenerativeAIEmbeddings(model="models/text-embedding-001",google_api_key=st.secrets["GOOGLE_API_KEY"])
+        st.session_state.embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001",google_api_key=st.secrets["GOOGLE_API_KEY"])
         st.session_state.loader = PyPDFLoader(file_path)
         st.session_state.docs = st.session_state.loader.load()
         st.session_state.text_splitter = RecursiveCharacterTextSplitter(chunk_size=2000, chunk_overlap=500)
