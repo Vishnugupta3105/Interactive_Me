@@ -1,4 +1,5 @@
 streamlit
+
 google-auth
 google-auth-oauthlib
 google-auth-httplib2
@@ -6,30 +7,32 @@ google-api-python-client
 google.cloud
 google-cloud-storage
 
-langchain==0.1.16
-langchain-community==0.0.32
-langchain-core==0.1.46
-langchain-text-splitters==0.0.1
-
-langchain-google-genai==1.0.3
-google-generativeai==0.4.1
-
-langchain-groq==0.1.3
-
-faiss-cpu==1.7.4
-pypdf
-
-spacy==3.7.2
-blis>=0.7.9,<0.8.0
-en_core_web_sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1-py3-none-any.whl
-
 gtts
 wikipedia-api
-torch
-transformers
+pypdf
+
 numpy==1.26.4
 pandas
 python-dotenv
+setuptools
+
+torch
+transformers
+
+spacy>=3.7.0,<4.0.0
+blis>=0.4.0,<1.0.1
+en_core_web_sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1-py3-none-any.whl
+
+faiss-cpu>=1.8.0
+
+langchain==0.1.16
+langchain-community==0.0.32
+langchain-core==0.1.46
+langchain-groq==0.1.3
+langchain-google-genai==1.0.3
+
+google-generativeai>=0.5.2,<0.6.0
+
 
 
 
